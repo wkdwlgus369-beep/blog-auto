@@ -1,17 +1,9 @@
 import streamlit as st
-import openai
-import hashlib
-import hmac
-import base64
-import time
-import requests
+import google.generativeai as genai
 
 st.title("산지크림 포스팅 생성기")
 
-openai_key = st.text_input("OpenAI API 키", type="password")
-naver_customer_id = st.text_input("네이버 고객 ID")
-naver_access_key = st.text_input("네이버 Access License", type="password")
-naver_secret_key = st.text_input("네이버 Secret Key", type="password")
+gemini_key = st.text_input("Gemini API 키", type="password")
 
 st.divider()
 
@@ -22,10 +14,11 @@ my_visit = st.text_area("내 방문 내용")
 other_reviews = st.text_area("참고 리뷰 (복붙)")
 
 if st.button("포스팅 생성"):
-    if not openai_key:
-        st.error("OpenAI API 키를 입력해주세요.")
+    if not gemini_key:
+        st.error("Gemini API 키를 입력해주세요.")
     else:
-        client = openai.OpenAI(api_key=openai_key)
+        genai.configure(api_key=gemini_key)
+        model = genai.GenerativeModel("gemini-1.5-flash")
         
         prompt = f"""
 너는 산지크림 블로그 작가야. 아래 정보로 네이버 블로그 포스팅을 써줘.
@@ -45,9 +38,5 @@ if st.button("포스팅 생성"):
 """
         
         with st.spinner("포스팅 생성 중..."):
-            response = client.chat.completions.create(
-                model="gpt-4o",
-                messages=[{"role": "user", "content": prompt}]
-            )
-            result = response.choices[0].message.content
-            st.markdown(result)
+            response = model.generate_content(prompt)
+            st.markdown(response.text)
