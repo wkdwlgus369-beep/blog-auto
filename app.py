@@ -18,7 +18,7 @@ if st.button("포스팅 생성"):
         st.error("Gemini API 키를 입력해주세요.")
     else:
         genai.configure(api_key=gemini_key)
-        model = genai.GenerativeModel("gemini-2.0-flash")
+        model = genai.GenerativeModel("gemini-1.5-flash-latest")
         
         prompt = f"""
 너는 산지크림 블로그 작가야. 아래 정보로 네이버 블로그 포스팅을 써줘.
